@@ -7,8 +7,8 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'uinstall-remove'
-  s.version          = '1.0.0'
+  s.name             = 'Uinstall'
+  s.version          = '1.0.1'
   s.summary          = 'A short description of uinstall-remove.'
 
 # This description is used to generate tags and improve search results.
