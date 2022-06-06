@@ -8,7 +8,7 @@
 import Foundation
 
 class UserDto: Codable {
-     init(uid: String, appToken: String, version: String, versionCode: Int, amplitudeUserId: String, token: String) {
+     init(uid: String, appToken: String, version: String, versionCode: Int, amplitudeUserId: String?, token: String) {
         self.uid = uid
         self.appToken = appToken
         self.version = version
@@ -21,7 +21,7 @@ class UserDto: Codable {
     let appToken: String
     let version: String
     let versionCode: Int
-    let amplitudeUserId: String
+    let amplitudeUserId: String?
     let token: String
     
     enum CodingKeys: String, CodingKey {

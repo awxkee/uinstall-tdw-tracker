@@ -11,7 +11,7 @@ import Alamofire
 public class UinstallTracker {
     private let applicationToken: String
     private let appPrefix: String
-    private let amplitudeUserId: String
+    private var amplitudeUserId: String?
     private let appsFlyerUID: String
     private let version: String
     private let buildVersion: Int
@@ -29,7 +29,7 @@ public class UinstallTracker {
     
     private let debugPrefix = "UinstallTracker: "
 
-    public init(_ applicationToken: String, _ appPrefix: String, _ appsFlyerUID: String, _ amplitudeUserId: String, _ isDebug: Bool) {
+    public init(_ applicationToken: String, _ appPrefix: String, _ appsFlyerUID: String, _ amplitudeUserId: String?, _ isDebug: Bool) {
         self.applicationToken = applicationToken
         self.amplitudeUserId = amplitudeUserId
         self.appPrefix = appPrefix
@@ -45,7 +45,18 @@ public class UinstallTracker {
         }
     }
     
-    func updateUninstallToken(token: String) {
+    public func updateAmplitudeUserId(_ amplitudeUserId: String?) {
+        self.amplitudeUserId = amplitudeUserId
+        uploadToken()
+    }
+    
+    public func uploadToken() {
+        if let hasToken = UserDefaults.standard.value(forKey: prefTokenName) as? String {
+            trySendNewToken(newToken: hasToken)
+        }
+    }
+    
+    public func updateUninstallToken(token: String) {
         if let successToken = UserDefaults.standard.value(forKey: prefLastSuccessToken) as? String, successToken == token {
             trySendNewToken(newToken: "Success token are the same, returning")
             return
@@ -69,6 +80,8 @@ public class UinstallTracker {
         }
         var request = URLRequest(url: realURL)
         request.method = .post
+        
+        request.timeoutInterval = 15.0
         request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         let userDto = UserDto(uid: "\(appPrefix):\(appsFlyerUID)", appToken: applicationToken, version: version, versionCode: buildVersion, amplitudeUserId: amplitudeUserId, token: newToken)
         
