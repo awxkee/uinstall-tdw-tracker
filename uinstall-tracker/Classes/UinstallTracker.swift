@@ -94,22 +94,31 @@ public class UinstallTracker {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         AF.request(request)
-            .validate(statusCode: 200...300)
             .publishData()
             .sink { [weak self] completion in
                 guard let `self` = self else { return }
                 self.tryDebugPrint(item: "Sending UserDto to global storage was completed")
             } receiveValue: { [weak self] dataResponse in
                 guard let `self` = self else { return }
-                switch dataResponse.result {
-                case .success(_):
+                if let statusCode = dataResponse.response?.statusCode, (200...299).contains(statusCode) {
                     UserDefaults.standard.setValue(nil, forKey: self.prefTokenName)
                     UserDefaults.standard.setValue(newToken, forKey: self.prefLastSuccessToken)
-                    break
-                case .failure(let error):
-                    self.tryDebugPrint(item: "Sending was completed with error : \(error). We're cruising to retry")
-                    self.retryCruise(token: newToken)
-                    break
+                } else {
+                    switch dataResponse.result {
+                    case .success(let response):
+                        if let code = String(data: response, encoding: .utf8) {
+                            self.tryDebugPrint(item: "Sending was completed with error : \(code). We're cruising to retry")
+                            self.retryCruise(token: newToken)
+                        } else {
+                            self.tryDebugPrint(item: "Cannot allocate data. We're cruising to retry")
+                            self.retryCruise(token: newToken)
+                        }
+                        break
+                    case .failure(let error):
+                        self.tryDebugPrint(item: "Sending was completed with error : \(error). We're cruising to retry")
+                        self.retryCruise(token: newToken)
+                        break
+                    }
                 }
             }.store(in: &cancellations)
 
