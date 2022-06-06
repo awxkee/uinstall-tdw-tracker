@@ -35,8 +35,8 @@ public class UinstallTracker {
         self.appPrefix = appPrefix
         self.appsFlyerUID = appsFlyerUID
         
-        self.version = Bundle.main.appBuild
-        self.buildVersion = Int(Bundle.main.appVersionLong) ?? 1
+        self.version = Bundle.main.appVersionLong
+        self.buildVersion = Int(Bundle.main.appBuild) ?? 1
         
         self.isDebug = isDebug
         
@@ -58,7 +58,7 @@ public class UinstallTracker {
     
     public func updateUninstallToken(token: String) {
         if let successToken = UserDefaults.standard.value(forKey: prefLastSuccessToken) as? String, successToken == token {
-            trySendNewToken(newToken: "Success token are the same, returning")
+            tryDebugPrint(item: "Success token are the same, returning")
             return
         }
         UserDefaults.standard.setValue(token, forKey: prefTokenName)
@@ -91,6 +91,7 @@ public class UinstallTracker {
         }
         
         request.httpBody = httpData
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         AF.request(request)
             .validate(statusCode: 200...300)
