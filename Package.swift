@@ -15,7 +15,7 @@ let package = Package(
             targets: ["Uinstall"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Alamofire/Alamofire.git", branch: "master")
+        .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.4.3"))
     ],
     targets: [
         .target(
