@@ -21,10 +21,7 @@ let package = Package(
         .target(
             name: "Uinstall",
             dependencies: [.product(name: "Alamofire", package: "Alamofire")],
-            path: "uinstall-tracker/Classes",
-            swiftSettings: [
-                .unsafeFlags(["-suppress-warnings"]),
-            ]),
+            path: "uinstall-tracker/Classes"
     ]
 )
 
