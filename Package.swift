@@ -21,7 +21,7 @@ let package = Package(
         .target(
             name: "Uinstall",
             dependencies: [.product(name: "Alamofire", package: "Alamofire")],
-            path: "uinstall-tracker/Classes"
+            path: "uinstall-tracker/Classes")
     ]
 )
 
